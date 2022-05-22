@@ -55,7 +55,7 @@ func (s state) quarterRound(x, y, z, w uint) {
 	setValue(w, d)
 }
 
-func (s state) innerBlock(x, y, z, w uint) {
+func (s state) innerBlock() {
 	// column rounds
 	s.quarterRound(0, 4, 8, 12)
 	s.quarterRound(1, 5, 9, 13)
@@ -67,10 +67,6 @@ func (s state) innerBlock(x, y, z, w uint) {
 	s.quarterRound(1, 6, 11, 12)
 	s.quarterRound(2, 7, 8, 13)
 	s.quarterRound(3, 4, 9, 14)
-}
-
-func (s state) block(x, y, z, w uint) {
-
 }
 
 type keySizeError int
