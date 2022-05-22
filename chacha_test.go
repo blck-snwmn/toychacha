@@ -118,3 +118,55 @@ func Test_state_quarterRound(t *testing.T) {
 	}
 }
 
+func TestNewState(t *testing.T) {
+	type args struct {
+		key   []byte
+		nonce []byte
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    state
+		wantErr bool
+	}{
+		{
+			name: "new",
+			args: args{
+				key: []byte{
+					0x01, 0x02, 0x03, 0x04,
+					0x05, 0x06, 0x07, 0x08,
+					0x09, 0x0A, 0x0B, 0x0C,
+					0x0D, 0x0E, 0x0F, 0x10,
+					0x11, 0x12, 0x13, 0x14,
+					0x15, 0x16, 0x17, 0x18,
+					0x19, 0x1A, 0x1B, 0x1C,
+					0x1D, 0x1E, 0x1F, 0x20,
+				},
+				nonce: []byte{
+					0xF1, 0xF2, 0xF3, 0xF4,
+					0xF5, 0xF6, 0xF7, 0xF8,
+					0xF9, 0xFA, 0xFB, 0xFC,
+				},
+			},
+			want: [][]uint32{
+				{0x61707865, 0x3320646e, 0x79622d32, 0x6b206574},
+				{0x201F1E1D, 0x1C1B1A19, 0x18171615, 0x14131211},
+				{0x100F0E0D, 0x0C0B0A09, 0x08070605, 0x04030201},
+				{0x1, 0xFCFBFAF9, 0xF8F7F6F5, 0xF4F3F2F1},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := NewState(tt.args.key, tt.args.nonce)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("NewState() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewState() = \n%x, want \n%x", got, tt.want)
+			}
+		})
+	}
+}

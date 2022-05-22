@@ -1,5 +1,10 @@
 package gochacha
 
+import (
+	"encoding/binary"
+	"fmt"
+)
+
 func rotationN(n uint32, shift uint) uint32 {
 	return n>>(32-shift) | n<<shift
 }
@@ -50,3 +55,47 @@ func (s state) quarterRound(x, y, z, w uint) {
 	setValue(w, d)
 }
 
+type keySizeError int
+
+func (k keySizeError) Error() string {
+	return fmt.Sprintf("invalid key length. got=%d, want=%d", k, 32)
+}
+
+type nonceSizeError int
+
+func (n nonceSizeError) Error() string {
+	return fmt.Sprintf("invalid nonce length. got=%d, want=%d", n, 12)
+}
+func NewState(key, nonce []byte) (state, error) {
+	if len(key) != 32 {
+		return nil, keySizeError(len(key))
+	}
+	if len(nonce) != 12 {
+		return nil, nonceSizeError(len(nonce))
+	}
+	s := make(state, 0, 4)
+	// magic
+	s = append(s, []uint32{0x61707865, 0x3320646e, 0x79622d32, 0x6b206574})
+
+	s = append(s, []uint32{
+		binary.LittleEndian.Uint32(key[28:32]),
+		binary.LittleEndian.Uint32(key[24:28]),
+		binary.LittleEndian.Uint32(key[20:24]),
+		binary.LittleEndian.Uint32(key[16:20]),
+	})
+
+	s = append(s, []uint32{
+		binary.LittleEndian.Uint32(key[12:16]),
+		binary.LittleEndian.Uint32(key[8:12]),
+		binary.LittleEndian.Uint32(key[4:8]),
+		binary.LittleEndian.Uint32(key[0:4]),
+	})
+	s = append(s, []uint32{
+		1,
+		binary.LittleEndian.Uint32(nonce[8:12]),
+		binary.LittleEndian.Uint32(nonce[4:8]),
+		binary.LittleEndian.Uint32(nonce[0:4]),
+	})
+
+	return s, nil
+}
