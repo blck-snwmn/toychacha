@@ -108,6 +108,41 @@ func block(key, nonce []byte, counter uint32) []byte {
 	return s.serialize()
 }
 
+func xor(l, r []byte) []byte {
+	if len(l) > len(r) {
+		l, r = r, l
+	}
+
+	for i := 0; i < len(l); i++ {
+		l[i] ^= r[i]
+	}
+	return l
+}
+
+func encrypt(key, nonce, plaintext []byte, counter uint32) []byte {
+	encrypted := make([]byte, len(plaintext))
+
+	header := encrypted
+	for len(plaintext) >= 64 {
+		counter++
+		keyStream := block(key, nonce, counter)
+		b, h := plaintext[0:64], header[0:64]
+		copy(h, b)
+		xor(h, keyStream)
+
+		plaintext = plaintext[64:]
+		header = header[64:]
+	}
+	if len(plaintext) > 0 {
+		counter++
+		keyStream := block(key, nonce, counter)
+		b, h := plaintext, header
+		copy(h, b)
+		xor(h, keyStream)
+	}
+	return encrypted
+}
+
 type keySizeError int
 
 func (k keySizeError) Error() string {
