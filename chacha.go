@@ -121,23 +121,24 @@ func newState(key, nonce []byte, counter uint32) (state, error) {
 	s = append(s, []uint32{0x61707865, 0x3320646e, 0x79622d32, 0x6b206574})
 
 	s = append(s, []uint32{
-		binary.LittleEndian.Uint32(key[28:32]),
-		binary.LittleEndian.Uint32(key[24:28]),
-		binary.LittleEndian.Uint32(key[20:24]),
-		binary.LittleEndian.Uint32(key[16:20]),
+		binary.LittleEndian.Uint32(key[0:4]),
+		binary.LittleEndian.Uint32(key[4:8]),
+		binary.LittleEndian.Uint32(key[8:12]),
+		binary.LittleEndian.Uint32(key[12:16]),
 	})
 
 	s = append(s, []uint32{
-		binary.LittleEndian.Uint32(key[12:16]),
-		binary.LittleEndian.Uint32(key[8:12]),
-		binary.LittleEndian.Uint32(key[4:8]),
-		binary.LittleEndian.Uint32(key[0:4]),
+		binary.LittleEndian.Uint32(key[16:20]),
+		binary.LittleEndian.Uint32(key[20:24]),
+		binary.LittleEndian.Uint32(key[24:28]),
+		binary.LittleEndian.Uint32(key[28:32]),
 	})
+
 	s = append(s, []uint32{
 		counter,
-		binary.LittleEndian.Uint32(nonce[8:12]),
-		binary.LittleEndian.Uint32(nonce[4:8]),
 		binary.LittleEndian.Uint32(nonce[0:4]),
+		binary.LittleEndian.Uint32(nonce[4:8]),
+		binary.LittleEndian.Uint32(nonce[8:12]),
 	})
 
 	return s, nil
