@@ -85,6 +85,19 @@ func (s state) add(other state) {
 	}
 }
 
+func (s state) serialize() []byte {
+	// state is 4*4 size
+	// state'element is uint32(4byte)
+	serialized := make([]byte, 4*4*4)
+	for i := 0; i < 4; i++ {
+		for j := 0; j < 4; j++ {
+			offset := (i*4 + j) * 4
+			binary.LittleEndian.PutUint32(serialized[offset:offset+4], s[i][j])
+		}
+	}
+	return serialized
+}
+
 type keySizeError int
 
 func (k keySizeError) Error() string {
