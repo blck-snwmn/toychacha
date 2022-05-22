@@ -204,3 +204,35 @@ func Test_state_innerBlock(t *testing.T) {
 		})
 	}
 }
+
+func Test_state_clone(t *testing.T) {
+	s := state{
+		{0x61707865, 0x3320646e, 0x79622d32, 0x6b206574},
+		{0x03020100, 0x07060504, 0x0b0a0908, 0x0f0e0d0c},
+		{0x13121110, 0x17161514, 0x1b1a1918, 0x1f1e1d1c},
+		{0x00000001, 0x09000000, 0x4a000000, 0x00000000},
+	}
+	want := state{
+		{0x61707865, 0x3320646e, 0x79622d32, 0x6b206574},
+		{0x03020100, 0x07060504, 0x0b0a0908, 0x0f0e0d0c},
+		{0x13121110, 0x17161514, 0x1b1a1918, 0x1f1e1d1c},
+		{0x00000001, 0x09000000, 0x4a000000, 0x00000000},
+	}
+	newS := s.clone()
+	if !reflect.DeepEqual(newS, want) {
+		t.Errorf("clone=\n%x, want=\n%x", newS, want)
+	}
+
+	{
+		newS[0][0] = 0x0
+		if s[0][0] != 0x61707865 {
+			t.Errorf("failed to deep copy. got=%d, want=%d", s[0][0], 0x61707865)
+		}
+	}
+	{
+		newS[1][3] = 0x0
+		if s[1][3] != 0x0f0e0d0c {
+			t.Errorf("failed to deep copy. got=%d, want=%d", s[1][3], 0x0f0e0d0c)
+		}
+	}
+}

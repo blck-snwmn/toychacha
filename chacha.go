@@ -69,6 +69,14 @@ func (s state) innerBlock() {
 	s.quarterRound(3, 4, 9, 14)
 }
 
+func (s state) clone() state {
+	newS := make(state, 4)
+	for i := 0; i < 4; i++ {
+		newS[i] = append(newS[i], s[i]...)
+	}
+	return newS
+}
+
 type keySizeError int
 
 func (k keySizeError) Error() string {
