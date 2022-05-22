@@ -55,6 +55,24 @@ func (s state) quarterRound(x, y, z, w uint) {
 	setValue(w, d)
 }
 
+func (s state) innerBlock(x, y, z, w uint) {
+	// column rounds
+	s.quarterRound(0, 4, 8, 12)
+	s.quarterRound(1, 5, 9, 13)
+	s.quarterRound(2, 6, 10, 14)
+	s.quarterRound(3, 7, 11, 15)
+
+	// diagonal rounds
+	s.quarterRound(0, 5, 10, 15)
+	s.quarterRound(1, 6, 11, 12)
+	s.quarterRound(2, 7, 8, 13)
+	s.quarterRound(3, 4, 9, 14)
+}
+
+func (s state) block(x, y, z, w uint) {
+
+}
+
 type keySizeError int
 
 func (k keySizeError) Error() string {
@@ -66,7 +84,7 @@ type nonceSizeError int
 func (n nonceSizeError) Error() string {
 	return fmt.Sprintf("invalid nonce length. got=%d, want=%d", n, 12)
 }
-func NewState(key, nonce []byte) (state, error) {
+func newState(key, nonce []byte) (state, error) {
 	if len(key) != 32 {
 		return nil, keySizeError(len(key))
 	}

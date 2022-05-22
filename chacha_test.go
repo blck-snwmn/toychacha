@@ -159,7 +159,7 @@ func TestNewState(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewState(tt.args.key, tt.args.nonce)
+			got, err := newState(tt.args.key, tt.args.nonce)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewState() error = %v, wantErr %v", err, tt.wantErr)
 				return
