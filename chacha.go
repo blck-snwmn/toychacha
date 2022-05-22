@@ -77,6 +77,14 @@ func (s state) clone() state {
 	return newS
 }
 
+func (s state) add(other state) {
+	for i := 0; i < 4; i++ {
+		for j := 0; j < 4; j++ {
+			s[i][j] += other[i][j]
+		}
+	}
+}
+
 type keySizeError int
 
 func (k keySizeError) Error() string {
