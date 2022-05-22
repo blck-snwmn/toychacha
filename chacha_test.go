@@ -120,8 +120,9 @@ func Test_state_quarterRound(t *testing.T) {
 
 func TestNewState(t *testing.T) {
 	type args struct {
-		key   []byte
-		nonce []byte
+		key     []byte
+		nonce   []byte
+		counter uint32
 	}
 	tests := []struct {
 		name    string
@@ -147,6 +148,7 @@ func TestNewState(t *testing.T) {
 					0xF5, 0xF6, 0xF7, 0xF8,
 					0xF9, 0xFA, 0xFB, 0xFC,
 				},
+				counter: 1,
 			},
 			want: [][]uint32{
 				{0x61707865, 0x3320646e, 0x79622d32, 0x6b206574},
@@ -159,7 +161,7 @@ func TestNewState(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := newState(tt.args.key, tt.args.nonce)
+			got, err := newState(tt.args.key, tt.args.nonce, tt.args.counter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewState() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -109,7 +109,7 @@ type nonceSizeError int
 func (n nonceSizeError) Error() string {
 	return fmt.Sprintf("invalid nonce length. got=%d, want=%d", n, 12)
 }
-func newState(key, nonce []byte) (state, error) {
+func newState(key, nonce []byte, counter uint32) (state, error) {
 	if len(key) != 32 {
 		return nil, keySizeError(len(key))
 	}
@@ -134,7 +134,7 @@ func newState(key, nonce []byte) (state, error) {
 		binary.LittleEndian.Uint32(key[0:4]),
 	})
 	s = append(s, []uint32{
-		1,
+		counter,
 		binary.LittleEndian.Uint32(nonce[8:12]),
 		binary.LittleEndian.Uint32(nonce[4:8]),
 		binary.LittleEndian.Uint32(nonce[0:4]),
