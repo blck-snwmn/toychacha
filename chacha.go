@@ -98,6 +98,16 @@ func (s state) serialize() []byte {
 	return serialized
 }
 
+func block(key, nonce []byte, counter uint32) []byte {
+	s, _ := newState(key, nonce, counter)
+	init := s.clone()
+	for i := 0; i < 10; i++ {
+		s.innerBlock()
+	}
+	s.add(init)
+	return s.serialize()
+}
+
 type keySizeError int
 
 func (k keySizeError) Error() string {
