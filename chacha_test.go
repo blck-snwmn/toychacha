@@ -250,7 +250,7 @@ func Test_state_add(t *testing.T) {
 		want state
 	}{
 		{
-			name: "",
+			name: "rfc7539 test vector",
 			s: state{
 				{0x837778ab, 0xe238d763, 0xa67ae21e, 0x5950bb2f},
 				{0xc4f2d0c7, 0xfc62bb2f, 0x8fa018fc, 0x3f5ec7b7},
@@ -287,7 +287,7 @@ func Test_state_serialize(t *testing.T) {
 		want []byte
 	}{
 		{
-			name: "",
+			name: "rfc7539 test vector",
 			s: state{
 				{0xe4e7f110, 0x15593bd1, 0x1fdd0f50, 0xc47120a3},
 				{0xc7f4d1c7, 0x0368c033, 0x9aaa2204, 0x4e6cd4c3},
