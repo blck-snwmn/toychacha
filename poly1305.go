@@ -41,9 +41,9 @@ func convertLittleEndian(b []byte) {
 	}
 }
 
-func leBytesToNum(b []byte) []byte {
+func leBytesToNum(b []byte) *big.Int {
 	convertLittleEndian(b)
-	return b
+	return new(big.Int).SetBytes(b)
 }
 
 func numTo16LeBytes(n *big.Int) []byte {
@@ -55,14 +55,10 @@ func numTo16LeBytes(n *big.Int) []byte {
 }
 
 func mac(msg, key []byte) []byte {
-
-	rr := leBytesToNum(key[0:16])
-	// clamp(rr)
-	r := new(big.Int).SetBytes(rr)
+	r := leBytesToNum(key[0:16])
 	r = clampForNum(r)
 
-	ss := leBytesToNum(key[16:32])
-	s := new(big.Int).SetBytes(ss)
+	s := leBytesToNum(key[16:32])
 
 	a := big.NewInt(0)
 	for len(msg) > 0 {
@@ -73,8 +69,7 @@ func mac(msg, key []byte) []byte {
 		nn := make([]byte, l, l+1)
 		copy(nn, msg[0:l])
 		nn = append(nn, 0x01)
-		nn = leBytesToNum(nn)
-		block := new(big.Int).SetBytes(nn)
+		block := leBytesToNum(nn)
 
 		a = a.Add(a, block)
 		a = a.Mul(a, r)
