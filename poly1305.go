@@ -12,6 +12,12 @@ func init() {
 	p = i.Sub(shifted, big.NewInt(5))
 }
 
+func genMacKey(key, nonce []byte) []byte {
+	var counter uint32 = 0
+	block := block(key, nonce, counter)
+	return block[0:32]
+}
+
 func clamp(n *big.Int) *big.Int {
 	t := new(big.Int).SetBytes([]byte{
 		0x0f, 0xff, 0xff, 0xfc,
