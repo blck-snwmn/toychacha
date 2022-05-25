@@ -4,6 +4,14 @@ import (
 	"math/big"
 )
 
+var p *big.Int
+
+func init() {
+	i := new(big.Int)
+	shifted := i.Lsh(big.NewInt(1), 130)
+	p = i.Sub(shifted, big.NewInt(5))
+}
+
 func clamp(r []byte) {
 	t := []byte{
 		0x0f, 0xff, 0xff, 0xfc,
@@ -25,14 +33,6 @@ func clampForNum(n *big.Int) *big.Int {
 	})
 	t.And(n, t)
 	return t
-}
-
-var p *big.Int
-
-func init() {
-	i := new(big.Int)
-	shifted := i.Lsh(big.NewInt(1), 130)
-	p = i.Sub(shifted, big.NewInt(5))
 }
 
 func convertLittleEndian(b []byte) {
