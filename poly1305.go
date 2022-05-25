@@ -41,6 +41,14 @@ func leBytesToNum(b []byte) []byte {
 	return b
 }
 
+func numTo16LeBytes(n *big.Int) []byte {
+	b := n.Bytes()
+	// 128 least significant bits
+	b = b[len(b)-16:]
+	convertLittleEndian(b)
+	return b
+}
+
 func mac(msg, key []byte) []byte {
 
 	rr := leBytesToNum(key[0:16])
@@ -69,8 +77,6 @@ func mac(msg, key []byte) []byte {
 		msg = msg[l:]
 	}
 	result := a.Add(a, s)
-	b := result.Bytes()
-	// 128 least significant bits
-	tag := leBytesToNum(b[len(b)-16:])
-	return tag
+
+	return numTo16LeBytes(result)
 }
