@@ -16,6 +16,17 @@ func clamp(r []byte) {
 	}
 }
 
+func clampForNum(n *big.Int) *big.Int {
+	t := new(big.Int).SetBytes([]byte{
+		0x0f, 0xff, 0xff, 0xfc,
+		0x0f, 0xff, 0xff, 0xfc,
+		0x0f, 0xff, 0xff, 0xfc,
+		0x0f, 0xff, 0xff, 0xff,
+	})
+	t.And(n, t)
+	return t
+}
+
 var p *big.Int
 
 func init() {
@@ -46,8 +57,9 @@ func numTo16LeBytes(n *big.Int) []byte {
 func mac(msg, key []byte) []byte {
 
 	rr := leBytesToNum(key[0:16])
-	clamp(rr)
+	// clamp(rr)
 	r := new(big.Int).SetBytes(rr)
+	r = clampForNum(r)
 
 	ss := leBytesToNum(key[16:32])
 	s := new(big.Int).SetBytes(ss)
