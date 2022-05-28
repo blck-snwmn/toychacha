@@ -1,8 +1,11 @@
 package gochacha
 
 import (
+	"crypto/rand"
 	"reflect"
 	"testing"
+
+	"golang.org/x/crypto/chacha20poly1305"
 )
 
 func Test_aeadEncrpt(t *testing.T) {
@@ -178,5 +181,44 @@ func Test_aeadDecrypt(t *testing.T) {
 				t.Errorf("aeadDecrypt() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func Test_gocerypt(t *testing.T) {
+	key := make([]byte, 32)
+	nonce := make([]byte, 12)
+	plaintext := make([]byte, 20)
+	additionalData := make([]byte, 10)
+
+	for i := 0; i < 100; i++ {
+		rand.Read(key)
+		rand.Read(nonce)
+		rand.Read(plaintext)
+		rand.Read(additionalData)
+
+		ciphertext, tag := aeadEncrpt(additionalData, key, nonce, nil, plaintext)
+
+		cipher, _ := chacha20poly1305.New(key)
+		gociphertextWithTag := cipher.Seal(nil, nonce, plaintext, additionalData)
+
+		gociphertext := gociphertextWithTag[:len(ciphertext)]
+		gotag := gociphertextWithTag[len(ciphertext):]
+
+		if !reflect.DeepEqual(ciphertext, gociphertext) {
+			t.Errorf("invalid ciphertext. got=%x, want=%x", ciphertext, gociphertext)
+		}
+		if !reflect.DeepEqual(tag, gotag) {
+			t.Errorf("invalid tag. got=%x, want=%x", tag, gotag)
+		}
+
+		openedPlaintext, _ := cipher.Open(nil, nonce, gociphertextWithTag, additionalData)
+
+		regeneratedPlaintext, _ := aeadDecrypt(additionalData, key, nonce, nil, ciphertext, tag)
+		if !reflect.DeepEqual(regeneratedPlaintext, plaintext) {
+			t.Errorf("invalid plaintext. got=%x, want=%x", regeneratedPlaintext, plaintext)
+		}
+		if !reflect.DeepEqual(regeneratedPlaintext, openedPlaintext) {
+			t.Errorf("invalid plaintext. got=%x, want=%x", regeneratedPlaintext, openedPlaintext)
+		}
 	}
 }
