@@ -123,23 +123,22 @@ func encrypt(key, nonce, plaintext []byte, counter uint32) []byte {
 	encrypted := make([]byte, len(plaintext))
 
 	header := encrypted
-	// TODO one loop
-	for len(plaintext) >= 64 {
-		keyStream := block(key, nonce, counter)
-		b, h := plaintext[0:64], header[0:64]
-		copy(h, b)
-		xor(h, keyStream)
+	l := 64
+	for len(plaintext) > 0 {
+		// Process in 64-byte units
+		if len(plaintext) < l {
+			//  Use the remaining plaintext, if the plaintext is less than 64 bytes in length
+			l = len(plaintext)
+		}
 
-		counter++ // for next loop
-		plaintext = plaintext[64:]
-		header = header[64:]
-	}
-	if len(plaintext) > 0 {
 		keyStream := block(key, nonce, counter)
-		b, h := plaintext, header
-		copy(h, b)
-		xor(h, keyStream)
+		copy(header[0:l], plaintext[0:l])
+		xor(header[0:l], keyStream)
+
+		counter++
+		plaintext, header = plaintext[l:], header[l:]
 	}
+
 	return encrypted
 }
 
