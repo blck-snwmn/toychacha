@@ -3,6 +3,8 @@ package gochacha
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
+	"reflect"
 )
 
 func pad16(x []byte) []byte {
@@ -35,4 +37,24 @@ func aeadEncrpt(aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
 
 	tag := mac(macData, otk)
 	return ciphertext, tag
+}
+
+func aeadDecrypt(aad, key, iv, constant, ciphertext, tag []byte) ([]byte, error) {
+	nonce := append(constant, iv...)
+	otk := genMacKey(key, nonce)
+
+	macData := append(aad, pad16(aad)...)
+
+	macData = append(macData, ciphertext...)
+	macData = append(macData, pad16(ciphertext)...)
+
+	macData = append(macData, numTo8LeBytes(len(aad))...)
+	macData = append(macData, numTo8LeBytes(len(ciphertext))...)
+
+	calcTag := mac(macData, otk)
+	if !reflect.DeepEqual(calcTag, tag) {
+		return nil, errors.New("invalid tag")
+	}
+
+	return encrypt(key, nonce, ciphertext, 1), nil
 }
