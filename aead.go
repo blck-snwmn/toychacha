@@ -12,13 +12,14 @@ func numTo8LeBytes(l int) []byte {
 	return b
 }
 
-func size(l int) int {
+// paddedSize returns the size padded to an integral multiple of 16
+func paddedSize(l int) int {
 	return l + 16 - l%16
 }
 
 func constructMacData(aad, ciphertext []byte) []byte {
-	aadsize := size(len(aad))
-	ciphertextsize := size(len(ciphertext))
+	aadsize := paddedSize(len(aad))
+	ciphertextsize := paddedSize(len(ciphertext))
 
 	macData := make([]byte, aadsize+ciphertextsize+8+8)
 	header := macData
