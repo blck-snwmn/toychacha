@@ -1,18 +1,10 @@
 package gochacha
 
 import (
-	"bytes"
 	"encoding/binary"
 	"errors"
 	"reflect"
 )
-
-func pad16(x []byte) []byte {
-	if len(x)%16 == 0 {
-		return nil
-	}
-	return bytes.Repeat([]byte{0}, 16-(len(x)%16))
-}
 
 func numTo8LeBytes(l int) []byte {
 	b := make([]byte, 8)
