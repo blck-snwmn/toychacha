@@ -3,7 +3,6 @@ package gochacha
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
 )
 
 func pad16(x []byte) []byte {
@@ -22,10 +21,8 @@ func numTo8LeBytes(l int) []byte {
 func aeadEncrpt(aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
 	nonce := append(constant, iv...)
 	otk := genMacKey(key, nonce)
-	fmt.Printf("otk=%x\n", otk)
 
 	ciphertext := encrypt(key, nonce, plaintext, 1)
-	fmt.Printf("ciphertext=%x\n", ciphertext)
 
 	// TODO 最初からサイズを決め打ちにして、あとからpaddingしなくてもよくする
 	macData := append(aad, pad16(aad)...)
