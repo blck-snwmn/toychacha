@@ -16,7 +16,7 @@ func Test_mac(t *testing.T) {
 		want []byte
 	}{
 		{
-			name: "rfc7539 test vector",
+			name: "rfc8439 test vector",
 			args: args{
 				key: []byte{
 					0x85, 0xd6, 0xbe, 0x78,
@@ -44,7 +44,7 @@ func Test_mac(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#1",
+			name: "rfc8439 test vector#1",
 			args: args{
 				key: []byte{
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -69,7 +69,7 @@ func Test_mac(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#2",
+			name: "rfc8439 test vector#2",
 			args: args{
 				key: []byte{
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -110,7 +110,7 @@ func Test_mac(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#3",
+			name: "rfc8439 test vector#3",
 			args: args{
 				key: []byte{
 					0x36, 0xe5, 0xf6, 0xb5, 0xc5, 0xe0, 0x60, 0x70,
@@ -151,7 +151,7 @@ func Test_mac(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#4",
+			name: "rfc8439 test vector#4",
 			args: args{
 				key: []byte{
 					0x1c, 0x92, 0x40, 0xa5, 0xeb, 0x55, 0xd3, 0x8a, 0xf3, 0x33, 0x88, 0x86, 0x04, 0xf6, 0xb5, 0xf0,
@@ -173,7 +173,7 @@ func Test_mac(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#5",
+			name: "rfc8439 test vector#5",
 			args: args{
 				key: []byte{
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -191,7 +191,7 @@ func Test_mac(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#6",
+			name: "rfc8439 test vector#6",
 			args: args{
 				key: []byte{
 					0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -210,7 +210,7 @@ func Test_mac(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#7",
+			name: "rfc8439 test vector#7",
 			args: args{
 				key: []byte{
 					0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -233,7 +233,7 @@ func Test_mac(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#8",
+			name: "rfc8439 test vector#8",
 			args: args{
 				key: []byte{
 					0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -256,7 +256,7 @@ func Test_mac(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#9",
+			name: "rfc8439 test vector#9",
 			args: args{
 				key: []byte{
 					0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -275,7 +275,7 @@ func Test_mac(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#10",
+			name: "rfc8439 test vector#10",
 			args: args{
 				key: []byte{
 					0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -300,7 +300,7 @@ func Test_mac(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#11",
+			name: "rfc8439 test vector#11",
 			args: args{
 				key: []byte{
 					0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -343,7 +343,7 @@ func Test_genMacKey(t *testing.T) {
 		want []byte
 	}{
 		{
-			name: "rfc7539 test vector",
+			name: "rfc8439 test vector",
 			args: args{
 				key: []byte{
 					0x80, 0x81, 0x82, 0x83,

@@ -20,7 +20,7 @@ func Test_aeadEncrpt(t *testing.T) {
 		want1 []byte
 	}{
 		{
-			name: "",
+			name: "rfc8439 test vector#1",
 			args: args{
 				aad: []byte{
 					0x50, 0x51, 0x52, 0x53,

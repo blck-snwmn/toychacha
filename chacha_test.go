@@ -16,7 +16,7 @@ func Test_rotationN(t *testing.T) {
 		want uint32
 	}{
 		{
-			name: "rfc7539 test vector",
+			name: "rfc8439 test vector",
 			args: args{0x7998bfda, 7},
 			want: 0xcc5fed3c,
 		},
@@ -46,7 +46,7 @@ func Test_quarterRound(t *testing.T) {
 		want3 uint32
 	}{
 		{
-			name: "rfc7539 test vector",
+			name: "rfc8439 test vector",
 			args: args{
 				0x11111111,
 				0x01020304,
@@ -92,7 +92,7 @@ func Test_state_quarterRound(t *testing.T) {
 		want state
 	}{
 		{
-			name: "rfc7539 test vector",
+			name: "rfc8439 test vector",
 			s: [][]uint32{
 				{0x879531e0, 0xc5ecf37d, 0x516461b1, 0xc9a62f8a},
 				{0x44c20ef3, 0x3390af7f, 0xd9fc690b, 0x2a5f714c},
@@ -180,7 +180,7 @@ func Test_state_innerBlock(t *testing.T) {
 		want state
 	}{
 		{
-			name: "rfc7539 test vector",
+			name: "rfc8439 test vector",
 			s: [][]uint32{
 				{0x61707865, 0x3320646e, 0x79622d32, 0x6b206574},
 				{0x03020100, 0x07060504, 0x0b0a0908, 0x0f0e0d0c},
@@ -250,7 +250,7 @@ func Test_state_add(t *testing.T) {
 		want state
 	}{
 		{
-			name: "rfc7539 test vector",
+			name: "rfc8439 test vector",
 			s: state{
 				{0x837778ab, 0xe238d763, 0xa67ae21e, 0x5950bb2f},
 				{0xc4f2d0c7, 0xfc62bb2f, 0x8fa018fc, 0x3f5ec7b7},
@@ -287,7 +287,7 @@ func Test_state_serialize(t *testing.T) {
 		want []byte
 	}{
 		{
-			name: "rfc7539 test vector",
+			name: "rfc8439 test vector",
 			s: state{
 				{0xe4e7f110, 0x15593bd1, 0x1fdd0f50, 0xc47120a3},
 				{0xc7f4d1c7, 0x0368c033, 0x9aaa2204, 0x4e6cd4c3},
@@ -323,7 +323,7 @@ func Test_block(t *testing.T) {
 		want []byte
 	}{
 		{
-			name: "rfc7539 test vector",
+			name: "rfc8439 test vector",
 			args: args{
 				key: []byte{
 					0x00, 0x01, 0x02, 0x03,
@@ -350,7 +350,7 @@ func Test_block(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#1",
+			name: "rfc8439 test vector#1",
 			args: args{
 				key: []byte{
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -375,7 +375,7 @@ func Test_block(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#2",
+			name: "rfc8439 test vector#2",
 			args: args{
 				key: []byte{
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -400,7 +400,7 @@ func Test_block(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#3",
+			name: "rfc8439 test vector#3",
 			args: args{
 				key: []byte{
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -425,7 +425,7 @@ func Test_block(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#4",
+			name: "rfc8439 test vector#4",
 			args: args{
 				key: []byte{
 					0x00, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -450,7 +450,7 @@ func Test_block(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#5",
+			name: "rfc8439 test vector#5",
 			args: args{
 				key: []byte{
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -497,7 +497,7 @@ func Test_encrypt(t *testing.T) {
 		want []byte
 	}{
 		{
-			name: "rfc7539 test vector",
+			name: "rfc8439 test vector",
 			args: args{
 				key: []byte{
 					0x00, 0x01, 0x02, 0x03,
@@ -552,7 +552,7 @@ func Test_encrypt(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#1",
+			name: "rfc8439 test vector#1",
 			args: args{
 				key: []byte{
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -585,7 +585,7 @@ func Test_encrypt(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#2",
+			name: "rfc8439 test vector#2",
 			args: args{
 				key: []byte{
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -654,7 +654,7 @@ func Test_encrypt(t *testing.T) {
 			},
 		},
 		{
-			name: "rfc7539 test vector#3",
+			name: "rfc8439 test vector#3",
 			args: args{
 				key: []byte{
 					0x1c, 0x92, 0x40, 0xa5, 0xeb, 0x55, 0xd3, 0x8a, 0xf3, 0x33, 0x88, 0x86, 0x04, 0xf6, 0xb5, 0xf0,
