@@ -1,7 +1,6 @@
 package gochacha
 
 import (
-	"bytes"
 	"math/big"
 )
 
@@ -44,10 +43,12 @@ func leBytesToNum(b []byte) *big.Int {
 	return new(big.Int).SetBytes(b)
 }
 
+var zeros = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+
 func numTo16LeBytes(n *big.Int) []byte {
 	b := n.Bytes()
 	// padding 0 if len(b) < 16
-	b = append(bytes.Repeat([]byte{0}, 16), b...)
+	b = append(zeros, b...)
 	// 128 least significant bits
 	b = b[len(b)-16:]
 	convertLittleEndian(b)
