@@ -222,3 +222,39 @@ func Test_gocerypt(t *testing.T) {
 		}
 	}
 }
+
+func Benchmark_gocerypt(b *testing.B) {
+	key := make([]byte, 32)
+	nonce := make([]byte, 12)
+	plaintext := make([]byte, 20)
+	additionalData := make([]byte, 10)
+	rand.Read(key)
+	rand.Read(nonce)
+	rand.Read(plaintext)
+	rand.Read(additionalData)
+
+	b.ResetTimer()
+	cipher, _ := chacha20poly1305.New(key)
+	for n := 0; n < b.N; n++ {
+		ciphertext := cipher.Seal(nil, nonce, plaintext, additionalData)
+		_, _ = cipher.Open(nil, nonce, ciphertext, additionalData)
+	}
+}
+
+func Benchmark_aeadcerypt(b *testing.B) {
+	key := make([]byte, 32)
+	nonce := make([]byte, 12)
+	plaintext := make([]byte, 20)
+	additionalData := make([]byte, 10)
+	rand.Read(key)
+	rand.Read(nonce)
+	rand.Read(plaintext)
+	rand.Read(additionalData)
+
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		ciphertext, tag := aeadEncrpt(additionalData, key, nonce, nil, plaintext)
+		_, _ = aeadDecrypt(additionalData, key, nonce, nil, ciphertext, tag)
+	}
+}
