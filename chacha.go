@@ -52,17 +52,7 @@ func newState(key, nonce []byte, counter uint32) (state, error) {
 type state []uint32
 
 func (s state) quarterRound(x, y, z, w uint) {
-	a := s[x]
-	b := s[y]
-	c := s[z]
-	d := s[w]
-
-	a, b, c, d = quarterRound(a, b, c, d)
-
-	s[x] = a
-	s[y] = b
-	s[z] = c
-	s[w] = d
+	s[x], s[y], s[z], s[w] = quarterRound(s[x], s[y], s[z], s[w])
 }
 
 func (s state) innerBlock() {
