@@ -23,59 +23,46 @@ func newState(key, nonce []byte, counter uint32) (state, error) {
 	if len(nonce) != 12 {
 		return nil, nonceSizeError(len(nonce))
 	}
-	s := make(state, 0, 4)
+	s := make(state, 16)
+
 	// magic
-	s = append(s, []uint32{0x61707865, 0x3320646e, 0x79622d32, 0x6b206574})
+	s[0] = 0x61707865
+	s[1] = 0x3320646e
+	s[2] = 0x79622d32
+	s[3] = 0x6b206574
 
-	s = append(s, []uint32{
-		binary.LittleEndian.Uint32(key[0:4]),
-		binary.LittleEndian.Uint32(key[4:8]),
-		binary.LittleEndian.Uint32(key[8:12]),
-		binary.LittleEndian.Uint32(key[12:16]),
-	})
+	s[4] = binary.LittleEndian.Uint32(key[0:4])
+	s[5] = binary.LittleEndian.Uint32(key[4:8])
+	s[6] = binary.LittleEndian.Uint32(key[8:12])
+	s[7] = binary.LittleEndian.Uint32(key[12:16])
 
-	s = append(s, []uint32{
-		binary.LittleEndian.Uint32(key[16:20]),
-		binary.LittleEndian.Uint32(key[20:24]),
-		binary.LittleEndian.Uint32(key[24:28]),
-		binary.LittleEndian.Uint32(key[28:32]),
-	})
+	s[8] = binary.LittleEndian.Uint32(key[16:20])
+	s[9] = binary.LittleEndian.Uint32(key[20:24])
+	s[10] = binary.LittleEndian.Uint32(key[24:28])
+	s[11] = binary.LittleEndian.Uint32(key[28:32])
 
-	s = append(s, []uint32{
-		counter,
-		binary.LittleEndian.Uint32(nonce[0:4]),
-		binary.LittleEndian.Uint32(nonce[4:8]),
-		binary.LittleEndian.Uint32(nonce[8:12]),
-	})
+	s[12] = counter
+	s[13] = binary.LittleEndian.Uint32(nonce[0:4])
+	s[14] = binary.LittleEndian.Uint32(nonce[4:8])
+	s[15] = binary.LittleEndian.Uint32(nonce[8:12])
 
 	return s, nil
 }
 
-type state [][]uint32
+type state []uint32
 
 func (s state) quarterRound(x, y, z, w uint) {
-	getIndex := func(v uint) (uint, uint) {
-		return v / 4, v % 4
-	}
-	getValue := func(v uint) uint32 {
-		i, j := getIndex(v)
-		return s[i][j]
-	}
-	setValue := func(v uint, value uint32) {
-		i, j := getIndex(v)
-		s[i][j] = value
-	}
-	a := getValue(x)
-	b := getValue(y)
-	c := getValue(z)
-	d := getValue(w)
+	a := s[x]
+	b := s[y]
+	c := s[z]
+	d := s[w]
 
 	a, b, c, d = quarterRound(a, b, c, d)
 
-	setValue(x, a)
-	setValue(y, b)
-	setValue(z, c)
-	setValue(w, d)
+	s[x] = a
+	s[y] = b
+	s[z] = c
+	s[w] = d
 }
 
 func (s state) innerBlock() {
@@ -93,18 +80,14 @@ func (s state) innerBlock() {
 }
 
 func (s state) clone() state {
-	newS := make(state, 4)
-	for i := 0; i < 4; i++ {
-		newS[i] = append(newS[i], s[i]...)
-	}
+	newS := make(state, 16)
+	copy(newS, s)
 	return newS
 }
 
 func (s state) add(other state) {
-	for i := 0; i < 4; i++ {
-		for j := 0; j < 4; j++ {
-			s[i][j] += other[i][j]
-		}
+	for i := 0; i < 16; i++ {
+		s[i] += other[i]
 	}
 }
 
@@ -114,8 +97,9 @@ func (s state) serialize() []byte {
 	serialized := make([]byte, 4*4*4)
 	for i := 0; i < 4; i++ {
 		for j := 0; j < 4; j++ {
-			offset := (i*4 + j) * 4
-			binary.LittleEndian.PutUint32(serialized[offset:offset+4], s[i][j])
+			index := (i*4 + j)
+			offset := index * 4
+			binary.LittleEndian.PutUint32(serialized[offset:offset+4], s[index])
 		}
 	}
 	return serialized
