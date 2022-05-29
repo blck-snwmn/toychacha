@@ -62,14 +62,15 @@ func mac(msg, key []byte) []byte {
 	s := leBytesToNum(key[16:32])
 
 	a := big.NewInt(0)
+	nn := make([]byte, 17)
 	for len(msg) > 0 {
 		l := 16
 		if len(msg) < l {
 			l = len(msg)
 		}
-		nn := make([]byte, l, l+1)
-		copy(nn, msg[0:l])
-		nn = append(nn, 0x01)
+		copy(nn[0:l], msg[0:l])
+		nn[l] = 0x01  // Index is almost 16. Index is len(msg) only once
+		nn = nn[:l+1] // Range is almost [0:17]. Range is [0:len(msg)+1] only once
 		block := leBytesToNum(nn)
 
 		a = a.Add(a, block)
