@@ -5,12 +5,22 @@ import (
 	"math/big"
 )
 
-var p *big.Int
+var (
+	p       *big.Int
+	clamper *big.Int
+)
 
 func init() {
 	i := new(big.Int)
 	shifted := i.Lsh(big.NewInt(1), 130)
 	p = i.Sub(shifted, big.NewInt(5))
+
+	clamper = new(big.Int).SetBytes([]byte{
+		0x0f, 0xff, 0xff, 0xfc,
+		0x0f, 0xff, 0xff, 0xfc,
+		0x0f, 0xff, 0xff, 0xfc,
+		0x0f, 0xff, 0xff, 0xff,
+	})
 }
 
 func genMacKey(key, nonce []byte) []byte {
@@ -20,13 +30,7 @@ func genMacKey(key, nonce []byte) []byte {
 }
 
 func clamp(n *big.Int) {
-	t := new(big.Int).SetBytes([]byte{
-		0x0f, 0xff, 0xff, 0xfc,
-		0x0f, 0xff, 0xff, 0xfc,
-		0x0f, 0xff, 0xff, 0xfc,
-		0x0f, 0xff, 0xff, 0xff,
-	})
-	n.And(n, t)
+	n.And(n, clamper)
 }
 
 func convertLittleEndian(b []byte) {
