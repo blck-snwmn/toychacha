@@ -19,15 +19,14 @@ func genMacKey(key, nonce []byte) []byte {
 	return block[0:32]
 }
 
-func clamp(n *big.Int) *big.Int {
+func clamp(n *big.Int) {
 	t := new(big.Int).SetBytes([]byte{
 		0x0f, 0xff, 0xff, 0xfc,
 		0x0f, 0xff, 0xff, 0xfc,
 		0x0f, 0xff, 0xff, 0xfc,
 		0x0f, 0xff, 0xff, 0xff,
 	})
-	t.And(n, t)
-	return t
+	n.And(n, t)
 }
 
 func convertLittleEndian(b []byte) {
@@ -53,7 +52,7 @@ func numTo16LeBytes(n *big.Int) []byte {
 
 func mac(msg, key []byte) []byte {
 	r := leBytesToNum(key[0:16])
-	r = clamp(r)
+	clamp(r)
 
 	s := leBytesToNum(key[16:32])
 
