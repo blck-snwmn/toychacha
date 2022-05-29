@@ -128,7 +128,7 @@ func block(key, nonce []byte, counter uint32) []byte {
 	return s.serialize()
 }
 
-func xor(l, r []byte) []byte {
+func xor(l, r []byte) {
 	if len(l) > len(r) {
 		l, r = r, l
 	}
@@ -136,7 +136,6 @@ func xor(l, r []byte) []byte {
 	for i := 0; i < len(l); i++ {
 		l[i] ^= r[i]
 	}
-	return l
 }
 
 func encrypt(key, nonce, plaintext []byte, counter uint32) []byte {
