@@ -12,3 +12,8 @@ go test
 ```
  go test -bench . -benchmem
 ```
+
+### Coverage
+```
+ go test -v -coverpkg=. ./...
+```
