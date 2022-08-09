@@ -1,6 +1,6 @@
 module github.com/blck-snwmn/go-chacha
 
-go 1.18
+go 1.19
 
 require golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 
