@@ -38,7 +38,9 @@ func constructMacData(aad, ciphertext []byte) []byte {
 	copy(header[:8], numTo8LeBytes(len(ciphertext)))
 	return macData
 }
-
+func AeadEncrpt(aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
+	return aeadEncrpt(aad, key, iv, constant, plaintext)
+}
 func aeadEncrpt(aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
 	nonce := append(constant, iv...)
 	otk := genMacKey(key, nonce)
