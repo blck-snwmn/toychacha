@@ -21,3 +21,17 @@ go test -bench . -benchmem
 ```
 go test -v -coverpkg=. ./...
 ```
+
+## WASI
+
+### Build
+
+```
+tinygo build -o wasm.wasm -target wasi --no-debug ./cmd/main.go
+```
+
+### Run
+
+```bash
+wasmtime wasm.wasm "Ladies and Gentlemen of the class of '99: If I could offer you only one tip for the future, sunscreen would be it."
+```
