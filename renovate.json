@@ -1,9 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
-  "timezone": "Asia/Tokyo",
-  "labels": ["dependencies"],
-  "ignorePresets": [":prHourlyLimit2"]
+  "extends": ["github>blck-snwmn/renovate-config"]
 }
