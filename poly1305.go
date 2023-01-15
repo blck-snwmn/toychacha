@@ -109,6 +109,11 @@ func mac(msg, key []byte) []byte {
 	return numTo16LeBytes(result)
 }
 
+func montgomeryRepresentation(t *big.Int) *big.Int {
+	tmp := new(big.Int).Set(t)
+	return mr(tmp.Mul(tmp, r2))
+}
+
 // mr do montgomery reduction
 func mr(t *big.Int) *big.Int {
 	tmp := new(big.Int)
@@ -125,11 +130,9 @@ func mr(t *big.Int) *big.Int {
 }
 
 func mul(a, b *big.Int) *big.Int {
-	tmpa := new(big.Int).Set(a)
-	tmpb := new(big.Int).Set(b)
-	aa := mr(tmpa.Mul(tmpa, r2))
-	bb := mr(tmpb.Mul(tmpb, r2))
-	cc := mr(tmpa.Mul(aa, bb))
+	aa := montgomeryRepresentation(a)
+	bb := montgomeryRepresentation(b)
+	cc := mr(aa.Mul(aa, bb))
 	return mr(cc)
 }
 
