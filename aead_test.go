@@ -3,6 +3,7 @@ package gochacha
 import (
 	"bytes"
 	"crypto/rand"
+	mrand "math/rand"
 	"reflect"
 	"testing"
 
@@ -188,10 +189,21 @@ func Test_aeadDecrypt(t *testing.T) {
 func Test_gocerypt(t *testing.T) {
 	key := make([]byte, 32)
 	nonce := make([]byte, 12)
-	plaintext := make([]byte, 20)
 	additionalData := make([]byte, 10)
 
-	for i := 0; i < 100; i++ {
+	sizef := func() int {
+		for {
+			size := mrand.Intn(100)
+			if size != 0 {
+				return size
+			}
+		}
+	}
+
+	for i := 0; i < 10000; i++ {
+		size := sizef()
+		plaintext := make([]byte, size)
+
 		rand.Read(key)
 		rand.Read(nonce)
 		rand.Read(plaintext)
@@ -202,14 +214,14 @@ func Test_gocerypt(t *testing.T) {
 		cipher, _ := chacha20poly1305.New(key)
 		gociphertextWithTag := cipher.Seal(nil, nonce, plaintext, additionalData)
 
-		gociphertext := gociphertextWithTag[:len(ciphertext)]
-		gotag := gociphertextWithTag[len(ciphertext):]
+		gociphertext := gociphertextWithTag[:size]
+		gotag := gociphertextWithTag[size:]
 
 		if !reflect.DeepEqual(ciphertext, gociphertext) {
-			t.Errorf("invalid ciphertext. got=%x, want=%x", ciphertext, gociphertext)
+			t.Errorf("invalid ciphertext. got=%x, want=%x(size=%d)", ciphertext, gociphertext, size)
 		}
 		if !reflect.DeepEqual(tag, gotag) {
-			t.Errorf("invalid tag. got=%x, want=%x", tag, gotag)
+			t.Errorf("invalid tag. got=%x, want=%x(size=%d)", tag, gotag, size)
 		}
 
 		openedPlaintext, _ := cipher.Open(nil, nonce, gociphertextWithTag, additionalData)
