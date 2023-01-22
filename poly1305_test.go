@@ -1,7 +1,6 @@
 package gochacha
 
 import (
-	"crypto/rand"
 	"reflect"
 	"testing"
 )
@@ -428,29 +427,5 @@ func Test_genMacKey(t *testing.T) {
 				t.Errorf("genMacKey() = %v, want %v", got, tt.want)
 			}
 		})
-	}
-}
-
-func Benchmark_mac(b *testing.B) {
-	key := make([]byte, 32)
-	plaintext := make([]byte, 20)
-	rand.Read(key)
-	rand.Read(plaintext)
-
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		_ = mac(plaintext, key)
-	}
-}
-
-func Benchmark_mac_(b *testing.B) {
-	key := make([]byte, 32)
-	plaintext := make([]byte, 20)
-	rand.Read(key)
-	rand.Read(plaintext)
-
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
-		_ = mac_(plaintext, key)
 	}
 }
