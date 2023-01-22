@@ -1,6 +1,7 @@
 package gochacha
 
 import (
+	"bytes"
 	"crypto/rand"
 	"reflect"
 	"testing"
@@ -256,5 +257,29 @@ func Benchmark_aeadcerypt(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		ciphertext, tag := aeadEncrpt(additionalData, key, nonce, nil, plaintext)
 		_, _ = aeadDecrypt(additionalData, key, nonce, nil, ciphertext, tag)
+	}
+}
+
+func Test_paddedSize(t *testing.T) {
+	type args struct {
+		d []byte
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{name: "size=0", args: args{d: []byte{}}, want: 0},
+		{name: "size=1", args: args{d: bytes.Repeat([]byte{0xFF}, 1)}, want: 16},
+		{name: "size=16", args: args{d: bytes.Repeat([]byte{0xFF}, 16)}, want: 16},
+		{name: "size=17", args: args{d: bytes.Repeat([]byte{0xFF}, 17)}, want: 32},
+		{name: "size=31", args: args{d: bytes.Repeat([]byte{0xFF}, 31)}, want: 32},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := paddedSize(tt.args.d); got != tt.want {
+				t.Errorf("paddedSize() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
