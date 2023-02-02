@@ -1,6 +1,7 @@
 package gochacha
 
 import (
+	"crypto/subtle"
 	"encoding/binary"
 	"fmt"
 )
@@ -152,7 +153,7 @@ func encrypt(key, nonce, plaintext []byte, counter uint32) []byte {
 
 		keyStream := block(key, nonce, counter)
 		copy(header[0:l], plaintext[0:l])
-		xor(header[0:l], keyStream)
+		subtle.XORBytes(header[0:l], header[0:l], keyStream)
 
 		counter++
 		plaintext, header = plaintext[l:], header[l:]
