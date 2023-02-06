@@ -204,10 +204,10 @@ func Test_gocerypt(t *testing.T) {
 		size := sizef()
 		plaintext := make([]byte, size)
 
-		rand.Read(key)
-		rand.Read(nonce)
-		rand.Read(plaintext)
-		rand.Read(additionalData)
+		_, _ = rand.Read(key)
+		_, _ = rand.Read(nonce)
+		_, _ = rand.Read(plaintext)
+		_, _ = rand.Read(additionalData)
 
 		ciphertext, tag := aeadEncrpt(additionalData, key, nonce, nil, plaintext)
 
@@ -241,10 +241,11 @@ func Benchmark_gocerypt(b *testing.B) {
 	nonce := make([]byte, 12)
 	plaintext := make([]byte, 20)
 	additionalData := make([]byte, 10)
-	rand.Read(key)
-	rand.Read(nonce)
-	rand.Read(plaintext)
-	rand.Read(additionalData)
+
+	_, _ = rand.Read(key)
+	_, _ = rand.Read(nonce)
+	_, _ = rand.Read(plaintext)
+	_, _ = rand.Read(additionalData)
 
 	b.ResetTimer()
 	cipher, _ := chacha20poly1305.New(key)
@@ -259,10 +260,11 @@ func Benchmark_aeadcerypt(b *testing.B) {
 	nonce := make([]byte, 12)
 	plaintext := make([]byte, 20)
 	additionalData := make([]byte, 10)
-	rand.Read(key)
-	rand.Read(nonce)
-	rand.Read(plaintext)
-	rand.Read(additionalData)
+
+	_, _ = rand.Read(key)
+	_, _ = rand.Read(nonce)
+	_, _ = rand.Read(plaintext)
+	_, _ = rand.Read(additionalData)
 
 	b.ResetTimer()
 
