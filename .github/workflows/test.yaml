@@ -1,22 +1,28 @@
-name: Go test
+name: Go test&lint
 
 on:
   push:
-    branches:
-      - main
   pull_request:
-    types: [opened, reopened, synchronize]
 
 jobs:
   test:
     name: go test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version-file: "go.mod"
-          cache: true
       - name: Run test
         run: |
-          go test ./...
+          go test ./... --shuffle on
+  lint:
+    name: go test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: "go.mod"
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
