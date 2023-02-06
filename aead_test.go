@@ -85,12 +85,17 @@ func Test_aeadEncrpt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := aeadEncrpt(tt.args.aad, tt.args.key, tt.args.iv, tt.args.constant, tt.args.plaintext)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("aeadEncrpt() got = \n%x, \nwant \n%x", got, tt.want)
+			nonce := append(tt.args.constant, tt.args.iv...)
+
+			cp, _ := NewToyChacha20Poly1305(tt.args.key)
+			got := cp.Seal(nil, nonce, tt.args.plaintext, tt.args.aad)
+
+			gotCiphertext, gotTag := got[:len(got)-16], got[len(got)-16:]
+			if !reflect.DeepEqual(gotCiphertext, tt.want) {
+				t.Errorf("aeadEncrpt() got = \n%x, \nwant \n%x", gotCiphertext, tt.want)
 			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("aeadEncrpt() got1 = \n%x, \nwant \n%x", got1, tt.want1)
+			if !reflect.DeepEqual(gotTag, tt.want1) {
+				t.Errorf("aeadEncrpt() got1 = \n%x, \nwant \n%x", gotTag, tt.want1)
 			}
 		})
 	}
@@ -174,7 +179,11 @@ func Test_aeadDecrypt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := aeadDecrypt(tt.args.aad, tt.args.key, tt.args.iv, tt.args.constant, tt.args.ciphertext, tt.args.tag)
+			nonce := append(tt.args.constant, tt.args.iv...)
+			ciphertext := append(tt.args.ciphertext, tt.args.tag...)
+
+			cp, _ := NewToyChacha20Poly1305(tt.args.key)
+			got, err := cp.Open(nil, nonce, ciphertext, tt.args.aad)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("aeadDecrypt() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -209,24 +218,20 @@ func Test_gocerypt(t *testing.T) {
 		_, _ = rand.Read(plaintext)
 		_, _ = rand.Read(additionalData)
 
-		ciphertext, tag := aeadEncrpt(additionalData, key, nonce, nil, plaintext)
+		cp, _ := NewToyChacha20Poly1305(key)
+		ciphertext := cp.Seal(nil, nonce, plaintext, additionalData)
 
 		cipher, _ := chacha20poly1305.New(key)
 		gociphertextWithTag := cipher.Seal(nil, nonce, plaintext, additionalData)
 
-		gociphertext := gociphertextWithTag[:size]
-		gotag := gociphertextWithTag[size:]
-
-		if !reflect.DeepEqual(ciphertext, gociphertext) {
-			t.Errorf("invalid ciphertext. got=%x, want=%x(size=%d)", ciphertext, gociphertext, size)
-		}
-		if !reflect.DeepEqual(tag, gotag) {
-			t.Errorf("invalid tag. got=%x, want=%x(size=%d)", tag, gotag, size)
+		if !reflect.DeepEqual(ciphertext, gociphertextWithTag) {
+			t.Errorf("invalid ciphertext. got=%x, want=%x(size=%d)", ciphertext, gociphertextWithTag, size)
 		}
 
 		openedPlaintext, _ := cipher.Open(nil, nonce, gociphertextWithTag, additionalData)
 
-		regeneratedPlaintext, _ := aeadDecrypt(additionalData, key, nonce, nil, ciphertext, tag)
+		regeneratedPlaintext, _ := cp.Open(nil, nonce, ciphertext, additionalData)
+
 		if !reflect.DeepEqual(regeneratedPlaintext, plaintext) {
 			t.Errorf("invalid plaintext. got=%x, want=%x", regeneratedPlaintext, plaintext)
 		}
@@ -268,9 +273,10 @@ func Benchmark_aeadcerypt(b *testing.B) {
 
 	b.ResetTimer()
 
+	cp, _ := NewToyChacha20Poly1305(key)
 	for n := 0; n < b.N; n++ {
-		ciphertext, tag := aeadEncrpt(additionalData, key, nonce, nil, plaintext)
-		_, _ = aeadDecrypt(additionalData, key, nonce, nil, ciphertext, tag)
+		ciphertext := cp.Seal(nil, nonce, plaintext, additionalData)
+		_, _ = cp.Open(nil, nonce, ciphertext, additionalData)
 	}
 }
 

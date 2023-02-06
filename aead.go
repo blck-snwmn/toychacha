@@ -1,9 +1,12 @@
 package gochacha
 
 import (
+	"crypto/cipher"
 	"crypto/subtle"
 	"encoding/binary"
 	"errors"
+
+	"golang.org/x/crypto/chacha20poly1305"
 )
 
 func numTo8LeBytes(l int) []byte {
@@ -40,10 +43,6 @@ func constructMacData(aad, ciphertext []byte) []byte {
 	return macData
 }
 
-func AeadEncrpt(aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
-	return aeadEncrpt(aad, key, iv, constant, plaintext)
-}
-
 func aeadEncrpt(aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
 	nonce := append(constant, iv...)
 	otk := genMacKey(key, nonce)
@@ -67,4 +66,36 @@ func aeadDecrypt(aad, key, iv, constant, ciphertext, tag []byte) ([]byte, error)
 	}
 
 	return encrypt(key, nonce, ciphertext, 1), nil
+}
+
+func NewToyChacha20Poly1305(key []byte) (cipher.AEAD, error) {
+	if len(key) != chacha20poly1305.KeySize {
+		return nil, errors.New("chacha20poly1305: bad key length")
+	}
+	return &toyChacha20Poly1305{key: key}, nil
+}
+
+type toyChacha20Poly1305 struct {
+	key []byte
+}
+
+// NonceSize implements cipher.AEAD
+func (*toyChacha20Poly1305) NonceSize() int {
+	return chacha20poly1305.NonceSize
+}
+
+// Open implements cipher.AEAD
+func (tc *toyChacha20Poly1305) Open(dst []byte, nonce []byte, ciphertext []byte, additionalData []byte) ([]byte, error) {
+	return aeadDecrypt(additionalData, tc.key, nonce, nil, ciphertext[:len(ciphertext)-16], ciphertext[len(ciphertext)-16:])
+}
+
+// Overhead implements cipher.AEAD
+func (*toyChacha20Poly1305) Overhead() int {
+	return chacha20poly1305.Overhead
+}
+
+// Seal implements cipher.AEAD
+func (tc *toyChacha20Poly1305) Seal(dst []byte, nonce []byte, plaintext []byte, additionalData []byte) []byte {
+	e, a := aeadEncrpt(additionalData, tc.key, nonce, nil, plaintext)
+	return append(e, a...)
 }
