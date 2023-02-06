@@ -80,9 +80,7 @@ type toyChacha20Poly1305 struct {
 }
 
 // NonceSize implements cipher.AEAD
-func (*toyChacha20Poly1305) NonceSize() int {
-	return chacha20poly1305.NonceSize
-}
+func (*toyChacha20Poly1305) NonceSize() int { return chacha20poly1305.NonceSize }
 
 // Open implements cipher.AEAD
 func (tc *toyChacha20Poly1305) Open(dst []byte, nonce []byte, ciphertext []byte, additionalData []byte) ([]byte, error) {
@@ -90,9 +88,7 @@ func (tc *toyChacha20Poly1305) Open(dst []byte, nonce []byte, ciphertext []byte,
 }
 
 // Overhead implements cipher.AEAD
-func (*toyChacha20Poly1305) Overhead() int {
-	return chacha20poly1305.Overhead
-}
+func (*toyChacha20Poly1305) Overhead() int { return chacha20poly1305.Overhead }
 
 // Seal implements cipher.AEAD
 func (tc *toyChacha20Poly1305) Seal(dst []byte, nonce []byte, plaintext []byte, additionalData []byte) []byte {
