@@ -6,7 +6,6 @@ on:
 
 jobs:
   test:
-    name: go test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,7 +16,6 @@ jobs:
         run: |
           go test ./... --shuffle on
   lint:
-    name: go test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
