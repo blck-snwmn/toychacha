@@ -1,19 +1,16 @@
 package main
 
 import (
+	"crypto/rand"
 	"fmt"
-	"os"
+	"reflect"
 
 	"github.com/blck-snwmn/toychacha"
 )
 
 func main() {
-	if len(os.Args) <= 1 {
-		fmt.Println("no args")
-		return
-	}
-	plaintext := os.Args[1]
-
+	plaintext := make([]byte, 100000)
+	rand.Read(plaintext)
 	aad := []byte{
 		0x50, 0x51, 0x52, 0x53,
 		0xc0, 0xc1, 0xc2, 0xc3,
@@ -30,10 +27,11 @@ func main() {
 		0x07, 0x00, 0x00, 0x00, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47,
 	}
 
-	tcp, _ := toychacha.NewToyChacha20Poly1305(key)
-	aead := tcp.Seal(nil, nonce, []byte(plaintext), aad)
-	fmt.Printf("AEAD=%x\n", aead)
+	tcp, _ := toychacha.New(key)
+	aead := make([]byte, len(plaintext)+tcp.Overhead())
+	aead = tcp.Seal(aead, nonce, []byte(plaintext), aad)
 
-	p, _ := tcp.Open(nil, nonce, aead, aad)
-	fmt.Printf("AEAD open=%[1]x(%[1]s)\n", p)
+	p := make([]byte, len(plaintext))
+	p, _ = tcp.Open(p, nonce, aead, aad)
+	fmt.Printf("seal -> open =%v\n", reflect.DeepEqual(plaintext, p))
 }
