@@ -46,7 +46,8 @@ func aeadEncrpt(dst, aad, key, iv, constant, plaintext []byte) ([]byte, []byte) 
 	nonce := append(constant, iv...)
 	otk := genMacKey(key, nonce)
 
-	ciphertext := encrypt(key, nonce, plaintext, 1)
+	ciphertext := make([]byte, len(plaintext))
+	ciphertext = encrypt(ciphertext, key, nonce, plaintext, 1)
 
 	aadsize := paddedSize(aad)
 	ciphertextsize := paddedSize(ciphertext)
@@ -73,8 +74,10 @@ func aeadDecrypt(dst, aad, key, iv, constant, ciphertext, tag []byte) ([]byte, e
 	if subtle.ConstantTimeCompare(calcTag[:], tag) == 0 {
 		return nil, errors.New("invalid tag")
 	}
-
-	return encrypt(key, nonce, ciphertext, 1), nil
+	if len(dst) < len(ciphertext) {
+		dst = make([]byte, len(ciphertext))
+	}
+	return encrypt(dst, key, nonce, ciphertext, 1), nil
 }
 
 func New(key []byte) (cipher.AEAD, error) {

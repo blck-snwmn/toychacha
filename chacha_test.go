@@ -678,7 +678,7 @@ func Test_encrypt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := encrypt(tt.args.key, tt.args.nonce, tt.args.plaintext, tt.args.counter); !reflect.DeepEqual(got, tt.want) {
+			if got := encrypt(make([]byte, len(tt.args.plaintext)), tt.args.key, tt.args.nonce, tt.args.plaintext, tt.args.counter); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("encrypt() = %v, want %v", got, tt.want)
 			}
 		})
