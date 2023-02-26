@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	toychacha "github.com/blck-snwmn/toychacha"
-	"golang.org/x/crypto/chacha20poly1305"
+	"github.com/blck-snwmn/toychacha"
 )
 
 func main() {
@@ -37,8 +36,4 @@ func main() {
 
 	p, _ := tcp.Open(nil, nonce, aead, aad)
 	fmt.Printf("AEAD open=%[1]x(%[1]s)\n", p)
-
-	cipher, _ := chacha20poly1305.New(key)
-	ciphertext := cipher.Seal(nil, nonce, []byte(plaintext), aad)
-	fmt.Printf("AEAD=%x\n", ciphertext)
 }
