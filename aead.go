@@ -92,6 +92,11 @@ func (*toyChacha20Poly1305) Overhead() int { return chacha20poly1305.Overhead }
 
 // Seal implements cipher.AEAD
 func (tc *toyChacha20Poly1305) Seal(dst []byte, nonce []byte, plaintext []byte, additionalData []byte) []byte {
+	if len(dst) < len(plaintext)+16 {
+		dst = make([]byte, len(plaintext)+16)
+	}
 	e, a := aeadEncrpt(additionalData, tc.key, nonce, nil, plaintext)
-	return append(e, a...)
+	copy(dst, e)
+	copy(dst[len(dst)-16:], a)
+	return dst
 }
