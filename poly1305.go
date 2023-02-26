@@ -1,4 +1,4 @@
-package gochacha
+package toychacha
 
 import (
 	"math/big"

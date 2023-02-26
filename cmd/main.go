@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	gochacha "github.com/blck-snwmn/toychacha"
+	toychacha "github.com/blck-snwmn/toychacha"
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
 func main() {
 	if len(os.Args) <= 1 {
+		fmt.Println("no args")
 		return
 	}
 	plaintext := os.Args[1]
@@ -30,9 +31,12 @@ func main() {
 		0x07, 0x00, 0x00, 0x00, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47,
 	}
 
-	tcp, _ := gochacha.NewToyChacha20Poly1305(key)
+	tcp, _ := toychacha.NewToyChacha20Poly1305(key)
 	aead := tcp.Seal(nil, nonce, []byte(plaintext), aad)
 	fmt.Printf("AEAD=%x\n", aead)
+
+	p, _ := tcp.Open(nil, nonce, aead, aad)
+	fmt.Printf("AEAD open=%[1]x(%[1]s)\n", p)
 
 	cipher, _ := chacha20poly1305.New(key)
 	ciphertext := cipher.Seal(nil, nonce, []byte(plaintext), aad)
