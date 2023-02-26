@@ -103,7 +103,7 @@ func (*toyChacha20Poly1305) NonceSize() int { return chacha20poly1305.NonceSize 
 
 // Open implements cipher.AEAD
 func (tc *toyChacha20Poly1305) Open(dst []byte, nonce []byte, ciphertext []byte, additionalData []byte) ([]byte, error) {
-	return aeadDecrypt(dst, additionalData, tc.key, nonce, nil, ciphertext[:len(ciphertext)-16], ciphertext[len(ciphertext)-16:])
+	return aeadDecrypt(dst, additionalData, tc.key, nonce, nil, ciphertext[:len(ciphertext)-tc.Overhead()], ciphertext[len(ciphertext)-tc.Overhead():])
 }
 
 // Overhead implements cipher.AEAD
@@ -111,11 +111,11 @@ func (*toyChacha20Poly1305) Overhead() int { return chacha20poly1305.Overhead }
 
 // Seal implements cipher.AEAD
 func (tc *toyChacha20Poly1305) Seal(dst []byte, nonce []byte, plaintext []byte, additionalData []byte) []byte {
-	if len(dst) < len(plaintext)+16 {
-		dst = make([]byte, len(plaintext)+16)
+	if len(dst) < len(plaintext)+tc.Overhead() {
+		dst = make([]byte, len(plaintext)+tc.Overhead())
 	}
 	e, a := aeadEncrpt(dst, additionalData, tc.key, nonce, nil, plaintext)
 	copy(dst, e)
-	copy(dst[len(dst)-16:], a)
+	copy(dst[len(dst)-tc.Overhead():], a)
 	return dst
 }
