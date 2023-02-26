@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	gochacha "github.com/blck-snwmn/go-chacha"
+	gochacha "github.com/blck-snwmn/toychacha"
 	"golang.org/x/crypto/chacha20poly1305"
 )
 

@@ -1,4 +1,4 @@
-module github.com/blck-snwmn/go-chacha
+module github.com/blck-snwmn/toychacha
 
 go 1.20
 
