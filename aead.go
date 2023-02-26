@@ -77,7 +77,14 @@ func aeadDecrypt(aad, key, iv, constant, ciphertext, tag []byte) ([]byte, error)
 	return encrypt(key, nonce, ciphertext, 1), nil
 }
 
-func NewToyChacha20Poly1305(key []byte) (cipher.AEAD, error) {
+func New(key []byte) (cipher.AEAD, error) {
+	if len(key) != chacha20poly1305.KeySize {
+		return nil, errors.New("chacha20poly1305: bad key length")
+	}
+	return &toyChacha20Poly1305{key: key}, nil
+}
+
+func NewToyChacha20Poly1305(key []byte) (*toyChacha20Poly1305, error) {
 	if len(key) != chacha20poly1305.KeySize {
 		return nil, errors.New("chacha20poly1305: bad key length")
 	}
