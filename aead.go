@@ -24,12 +24,12 @@ func paddedSize(d []byte) int {
 	return len(d) + 16 - c
 }
 
-func constructMacData(aad, ciphertext []byte) []byte {
+func constructMacData(macdata, aad, ciphertext []byte) {
 	aadsize := paddedSize(aad)
 	ciphertextsize := paddedSize(ciphertext)
 
-	macData := make([]byte, aadsize+ciphertextsize+8+8)
-	header := macData
+	// macData := make([]byte, aadsize+ciphertextsize+8+8)
+	header := macdata
 
 	copy(header[:aadsize], aad)
 	header = header[aadsize:]
@@ -40,7 +40,6 @@ func constructMacData(aad, ciphertext []byte) []byte {
 	copy(header[:8], numTo8LeBytes(len(aad)))
 	header = header[8:]
 	copy(header[:8], numTo8LeBytes(len(ciphertext)))
-	return macData
 }
 
 func aeadEncrpt(aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
@@ -49,7 +48,12 @@ func aeadEncrpt(aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
 
 	ciphertext := encrypt(key, nonce, plaintext, 1)
 
-	macData := constructMacData(aad, ciphertext)
+	aadsize := paddedSize(aad)
+	ciphertextsize := paddedSize(ciphertext)
+
+	macData := make([]byte, aadsize+ciphertextsize+8+8)
+
+	constructMacData(macData, aad, ciphertext)
 	tag := mac(macData, otk)
 	return ciphertext, tag
 }
@@ -58,7 +62,12 @@ func aeadDecrypt(aad, key, iv, constant, ciphertext, tag []byte) ([]byte, error)
 	nonce := append(constant, iv...)
 	otk := genMacKey(key, nonce)
 
-	macData := constructMacData(aad, ciphertext)
+	aadsize := paddedSize(aad)
+	ciphertextsize := paddedSize(ciphertext)
+
+	macData := make([]byte, aadsize+ciphertextsize+8+8)
+
+	constructMacData(macData, aad, ciphertext)
 
 	calcTag := mac(macData, otk)
 	if subtle.ConstantTimeCompare(calcTag, tag) == 0 {
