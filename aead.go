@@ -42,7 +42,7 @@ func constructMacData(macdata, aad, ciphertext []byte) {
 	copy(header[:8], numTo8LeBytes(len(ciphertext)))
 }
 
-func aeadEncrpt(aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
+func aeadEncrpt(dst, aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
 	nonce := append(constant, iv...)
 	otk := genMacKey(key, nonce)
 
@@ -58,7 +58,7 @@ func aeadEncrpt(aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
 	return ciphertext, tag[:]
 }
 
-func aeadDecrypt(aad, key, iv, constant, ciphertext, tag []byte) ([]byte, error) {
+func aeadDecrypt(dst, aad, key, iv, constant, ciphertext, tag []byte) ([]byte, error) {
 	nonce := append(constant, iv...)
 	otk := genMacKey(key, nonce)
 
@@ -100,7 +100,7 @@ func (*toyChacha20Poly1305) NonceSize() int { return chacha20poly1305.NonceSize 
 
 // Open implements cipher.AEAD
 func (tc *toyChacha20Poly1305) Open(dst []byte, nonce []byte, ciphertext []byte, additionalData []byte) ([]byte, error) {
-	return aeadDecrypt(additionalData, tc.key, nonce, nil, ciphertext[:len(ciphertext)-16], ciphertext[len(ciphertext)-16:])
+	return aeadDecrypt(dst, additionalData, tc.key, nonce, nil, ciphertext[:len(ciphertext)-16], ciphertext[len(ciphertext)-16:])
 }
 
 // Overhead implements cipher.AEAD
@@ -111,7 +111,7 @@ func (tc *toyChacha20Poly1305) Seal(dst []byte, nonce []byte, plaintext []byte, 
 	if len(dst) < len(plaintext)+16 {
 		dst = make([]byte, len(plaintext)+16)
 	}
-	e, a := aeadEncrpt(additionalData, tc.key, nonce, nil, plaintext)
+	e, a := aeadEncrpt(dst, additionalData, tc.key, nonce, nil, plaintext)
 	copy(dst, e)
 	copy(dst[len(dst)-16:], a)
 	return dst
