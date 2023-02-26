@@ -43,19 +43,23 @@ func leBytesToNum(b []byte) *big.Int {
 	return new(big.Int).SetBytes(b)
 }
 
-var zeros = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-
-func numTo16LeBytes(n *big.Int) []byte {
+func numTo16LeBytes(n *big.Int) [16]byte {
 	b := n.Bytes()
-	// padding 0 if len(b) < 16
-	b = append(zeros, b...)
-	// 128 least significant bits
-	b = b[len(b)-16:]
-	convertLittleEndian(b)
-	return b
+	var result [16]byte
+	start := 0
+	if len(b) < 16 {
+		start = 16 - len(b)
+	} else {
+		// Use only the last 16 bytes if b length > 16
+		b = b[len(b)-16:]
+	}
+
+	copy(result[start:], b)
+	convertLittleEndian(result[:])
+	return result
 }
 
-func mac(msg, key []byte) []byte {
+func mac(msg, key []byte) [16]byte {
 	r := leBytesToNum(key[0:16])
 	clamp(r)
 

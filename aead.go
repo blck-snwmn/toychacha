@@ -55,7 +55,7 @@ func aeadEncrpt(aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
 
 	constructMacData(macData, aad, ciphertext)
 	tag := mac(macData, otk)
-	return ciphertext, tag
+	return ciphertext, tag[:]
 }
 
 func aeadDecrypt(aad, key, iv, constant, ciphertext, tag []byte) ([]byte, error) {
@@ -70,7 +70,7 @@ func aeadDecrypt(aad, key, iv, constant, ciphertext, tag []byte) ([]byte, error)
 	constructMacData(macData, aad, ciphertext)
 
 	calcTag := mac(macData, otk)
-	if subtle.ConstantTimeCompare(calcTag, tag) == 0 {
+	if subtle.ConstantTimeCompare(calcTag[:], tag) == 0 {
 		return nil, errors.New("invalid tag")
 	}
 
