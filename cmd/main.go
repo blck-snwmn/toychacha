@@ -3,14 +3,30 @@ package main
 import (
 	"crypto/rand"
 	"fmt"
+	"log"
+	"os"
 	"reflect"
+	"runtime/pprof"
 
 	"github.com/blck-snwmn/toychacha"
 )
 
 func main() {
+	// {
+	// 	f, err := os.Create("cpu.prof")
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	err = pprof.StartCPUProfile(f)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	defer pprof.StopCPUProfile()
+	// }
+
 	plaintext := make([]byte, 100000)
-	rand.Read(plaintext)
+	_, _ = rand.Read(plaintext)
+
 	aad := []byte{
 		0x50, 0x51, 0x52, 0x53,
 		0xc0, 0xc1, 0xc2, 0xc3,
@@ -30,8 +46,19 @@ func main() {
 	tcp, _ := toychacha.New(key)
 	aead := make([]byte, len(plaintext)+tcp.Overhead())
 	aead = tcp.Seal(aead, nonce, []byte(plaintext), aad)
+	// fmt.Printf("AEAD=%X\n", aead)
 
 	p := make([]byte, len(plaintext))
 	p, _ = tcp.Open(p, nonce, aead, aad)
 	fmt.Printf("seal -> open =%v\n", reflect.DeepEqual(plaintext, p))
+	{
+		f, err := os.Create("heap.prof")
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = pprof.WriteHeapProfile(f)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }
