@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: blck-snwmn/github-playground/.github/actions/go@main
+      - uses: blck-snwmn/github-playground/.github/actions/gosetup@main
       - name: Run test
         run: |
           go test ./... --shuffle on
