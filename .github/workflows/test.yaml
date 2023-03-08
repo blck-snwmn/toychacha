@@ -5,19 +5,8 @@ on:
   pull_request:
 
 jobs:
-  test:
+  test-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: blck-snwmn/github-playground/.github/actions/gosetup@main
-      - name: Run test
-        run: |
-          go test ./... --shuffle on
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
-        with:
-          go-version-file: "go.mod"
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+      - uses: blck-snwmn/github-playground/.github/resuable-pr-release.yml@main
+
