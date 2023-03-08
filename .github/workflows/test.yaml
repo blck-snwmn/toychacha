@@ -8,5 +8,5 @@ jobs:
   test-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: blck-snwmn/github-playground/.github/resuable-pr-release.yml@main
+      - uses: blck-snwmn/github-playground/.github/workflows/resuable-go-lint.yml@main
 
