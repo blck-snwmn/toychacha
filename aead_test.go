@@ -3,7 +3,7 @@ package toychacha
 import (
 	"bytes"
 	"crypto/rand"
-	mrand "math/rand"
+	"math/big"
 	"reflect"
 	"testing"
 
@@ -200,9 +200,12 @@ func Test_gocerypt(t *testing.T) {
 	nonce := make([]byte, 12)
 	additionalData := make([]byte, 10)
 
-	sizef := func() int {
+	max := big.NewInt(100)
+
+	sizef := func() int64 {
 		for {
-			size := mrand.Intn(100)
+			bsize, _ := rand.Int(rand.Reader, max)
+			size := bsize.Int64()
 			if size != 0 {
 				return size
 			}
