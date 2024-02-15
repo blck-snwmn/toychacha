@@ -68,10 +68,8 @@ func mac(msg, key []byte) [16]byte {
 	a := big.NewInt(0)
 	nn := make([]byte, 17)
 	for len(msg) > 0 {
-		l := 16
-		if len(msg) < l {
-			l = len(msg)
-		}
+		l := min(16, len(msg))
+
 		copy(nn[0:l], msg[0:l])
 		nn[l] = 0x01  // Index is almost 16. Index is len(msg) only once
 		nn = nn[:l+1] // Range is almost [0:17]. Range is [0:len(msg)+1] only once
