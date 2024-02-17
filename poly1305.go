@@ -45,15 +45,13 @@ func leBytesToNum(b []byte) *big.Int {
 
 func numTo16LeBytes(n *big.Int) [16]byte {
 	b := n.Bytes()
-	var result [16]byte
-	start := 0
-	if len(b) < 16 {
-		start = 16 - len(b)
-	} else {
-		// Use only the last 16 bytes if b length > 16
-		b = b[len(b)-16:]
-	}
+	// Use only the last 16 bytes if b length > 16
+	b = b[max(0, len(b)-16):]
 
+	var result [16]byte
+
+	// pack values from the end of the array.
+	start := max(0, 16-len(b))
 	copy(result[start:], b)
 	convertLittleEndian(result[:])
 	return result
