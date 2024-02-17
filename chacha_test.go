@@ -1,6 +1,7 @@
 package toychacha
 
 import (
+	"crypto/rand"
 	"reflect"
 	"testing"
 )
@@ -682,5 +683,23 @@ func Test_encrypt(t *testing.T) {
 				t.Errorf("encrypt() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func Benchmark_toychacha(b *testing.B) {
+	key := make([]byte, 32)
+	nonce := make([]byte, 12)
+	plaintext := make([]byte, 20)
+
+	_, _ = rand.Read(key)
+	_, _ = rand.Read(nonce)
+	_, _ = rand.Read(plaintext)
+
+	b.ResetTimer()
+
+	dst := make([]byte, len(plaintext))
+
+	for i := 0; i < b.N; i++ {
+		encrypt(dst, key, nonce, plaintext, 1)
 	}
 }
