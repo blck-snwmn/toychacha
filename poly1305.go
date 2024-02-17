@@ -52,7 +52,7 @@ func numTo16LeBytes(n *big.Int) [16]byte {
 	var result [16]byte
 
 	// pack values from the end of the array.
-	start := max(0, 16-len(b))
+	start := 16 - len(b)
 	copy(result[start:], b)
 	convertLittleEndian(result[:])
 	return result
