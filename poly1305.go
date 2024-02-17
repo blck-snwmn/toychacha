@@ -46,7 +46,8 @@ func leBytesToNum(b []byte) *big.Int {
 func numTo16LeBytes(n *big.Int) [16]byte {
 	b := n.Bytes()
 	// Use only the last 16 bytes if b length > 16
-	b = b[max(0, len(b)-16):]
+	bstart := max(0, len(b)-16)
+	b = b[bstart:]
 
 	var result [16]byte
 
