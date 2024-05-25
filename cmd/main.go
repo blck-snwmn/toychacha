@@ -1,17 +1,26 @@
 package main
 
 import (
-	"crypto/rand"
+	"flag"
 	"fmt"
-	"log"
-	"os"
 	"reflect"
-	"runtime/pprof"
+	"time"
 
 	"github.com/blck-snwmn/toychacha"
+	"github.com/pkg/profile"
 )
 
 func main() {
+	now := time.Now()
+	defer func() {
+		fmt.Printf("time=%v\n", time.Since(now))
+	}()
+
+	b := flag.Bool("b", false, "")
+	flag.Parse()
+	if *b {
+		defer profile.Start().Stop()
+	}
 	// {
 	// 	f, err := os.Create("cpu.prof")
 	// 	if err != nil {
@@ -24,8 +33,18 @@ func main() {
 	// 	defer pprof.StopCPUProfile()
 	// }
 
-	plaintext := make([]byte, 100000)
-	_, _ = rand.Read(plaintext)
+	plaintext := []byte(`
+	this is a long text. this is a pen. my name is alice. my job is a teacher.
+	tell me your name. tell me your job. tell me your hobby. tell me your favorite.
+	my hobby is reading. my favorite book is alice in wonderland.
+	my favorite food is sushi. 
+
+	this is a plaintext. 
+	this is a plaintext.
+	this is a plaintext.
+	this is a plaintext.
+	this is a plaintext.
+	`)
 
 	aad := []byte{
 		0x50, 0x51, 0x52, 0x53,
@@ -51,14 +70,14 @@ func main() {
 	p := make([]byte, len(plaintext))
 	p, _ = tcp.Open(p, nonce, aead, aad)
 	fmt.Printf("seal -> open =%v\n", reflect.DeepEqual(plaintext, p))
-	{
-		f, err := os.Create("heap.prof")
-		if err != nil {
-			log.Fatal(err)
-		}
-		err = pprof.WriteHeapProfile(f)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+	// {
+	// 	f, err := os.Create("heap.prof")
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	err = pprof.WriteHeapProfile(f)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// }
 }
