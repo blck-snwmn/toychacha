@@ -18,6 +18,12 @@ jobs:
           go install github.com/aereal/gotest2rdf/cmd/gotest2rdf@latest
       - name: Run test
         run: |
+          go test ./... --shuffle on --parallel 10 --p 10 --json
+      - name: Run test
+        run: |
+          go test ./... --shuffle on --parallel 10 --p 10 --json | gotest2rdf 
+      - name: Run test
+        run: |
           go test ./... --shuffle on --parallel 10 --p 10 --json | gotest2rdf | reviewdog -f rdjsonl
   lint:
     runs-on: ubuntu-latest
