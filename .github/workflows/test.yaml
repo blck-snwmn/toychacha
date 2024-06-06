@@ -5,5 +5,20 @@ on:
   pull_request:
 
 jobs:
-  test-lint:
-    uses: blck-snwmn/share-workflows/.github/workflows/reusable-go-lint.yml@main
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+      - name: Run test
+        run: |
+          go test ./... --shuffle on --parallel 10 --p 10
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          args: --enable=gosec
