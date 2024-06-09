@@ -12,10 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
-      - uses: reviewdog/action-setup@v1
-      - name: Install 
-        run: |
-          go install github.com/aereal/gotest2rdf/cmd/gotest2rdf@latest
       - name: Run test
         run: |
           go test ./... --shuffle on --parallel 10 --p 10
