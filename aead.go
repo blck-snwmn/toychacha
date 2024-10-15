@@ -25,17 +25,17 @@ func constructMacData(macdata, aad, ciphertext []byte) {
 	ciphertextsize := paddedSize(ciphertext)
 
 	// macData := make([]byte, aadsize+ciphertextsize+8+8)
-	header := macdata
+	head := macdata
 
-	copy(header[:aadsize], aad)
-	header = header[aadsize:]
+	copy(head[:aadsize], aad)
+	head = head[aadsize:]
 
-	copy(header[:ciphertextsize], ciphertext)
-	header = header[ciphertextsize:]
+	copy(head[:ciphertextsize], ciphertext)
+	head = head[ciphertextsize:]
 
-	copy(header[:8], numTo8LeBytes(len(aad)))
-	header = header[8:]
-	copy(header[:8], numTo8LeBytes(len(ciphertext)))
+	copy(head[:8], numTo8LeBytes(len(aad)))
+	head = head[8:]
+	copy(head[:8], numTo8LeBytes(len(ciphertext)))
 }
 
 func aeadEncrpt(dst, aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
