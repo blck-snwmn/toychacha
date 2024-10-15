@@ -9,7 +9,8 @@ import (
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
-func numTo8LeBytes(l int) []byte {
+func numTo8LeBytes(in []byte) []byte {
+	l := len(in)
 	b := make([]byte, 8)
 	binary.LittleEndian.PutUint64(b, uint64(l))
 	return b
@@ -33,9 +34,9 @@ func constructMacData(macdata, aad, ciphertext []byte) {
 	copy(head[:ciphertextsize], ciphertext)
 	head = head[ciphertextsize:]
 
-	copy(head[:8], numTo8LeBytes(len(aad)))
+	copy(head[:8], numTo8LeBytes(aad))
 	head = head[8:]
-	copy(head[:8], numTo8LeBytes(len(ciphertext)))
+	copy(head[:8], numTo8LeBytes(ciphertext))
 }
 
 func aeadEncrpt(dst, aad, key, iv, constant, plaintext []byte) ([]byte, []byte) {
