@@ -20,7 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          args: --enable=gosec
+      - name: Run lint
+        run: |
+          go tool golangci-lint run  --enable=gosec
