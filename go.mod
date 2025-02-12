@@ -1,6 +1,6 @@
 module github.com/blck-snwmn/toychacha
 
-go 1.23.5
+go 1.24.0
 
 require (
 	github.com/pkg/profile v1.7.0
