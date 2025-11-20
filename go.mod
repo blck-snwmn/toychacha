@@ -4,12 +4,12 @@ go 1.24.0
 
 require (
 	github.com/pkg/profile v1.7.0
-	golang.org/x/crypto v0.43.0
+	golang.org/x/crypto v0.45.0
 )
 
 require (
 	github.com/felixge/fgprof v0.9.3 // indirect
 	github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
-	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
 )
