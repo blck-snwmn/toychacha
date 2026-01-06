@@ -17,6 +17,7 @@ type nonceSizeError int
 func (n nonceSizeError) Error() string {
 	return fmt.Sprintf("invalid nonce length. got=%d, want=%d", n, 12)
 }
+
 func newState(key, nonce []byte, counter uint32) (state, error) {
 	if len(key) != 32 {
 		return nil, keySizeError(len(key))
