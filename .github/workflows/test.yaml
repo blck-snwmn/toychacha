@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6
       - uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
         with:
-          aqua_version: v2.55.1
+          aqua_version: v2.55.3
       - name: Run lint
         run: |
           golangci-lint run --enable=gosec
