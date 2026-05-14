@@ -6,6 +6,32 @@ Toy implementation of chacha20 poly1305 written in Go.
 
 See: https://datatracker.ietf.org/doc/html/rfc8439
 
+## Development
+
+CLI tools (`golangci-lint`, `lefthook`) are managed by [aqua](https://aquaproj.github.io/) with versions pinned in [aqua.yaml](aqua.yaml).
+
+### Install tools
+
+Install aqua itself first (see the [aqua installation guide](https://aquaproj.github.io/docs/install)), then install the pinned tools:
+
+```
+aqua install
+```
+
+### Set up git hooks
+
+[lefthook](lefthook.yml) runs `golangci-lint` on staged `*.go` files before each commit. Register the hooks once after cloning:
+
+```
+lefthook install
+```
+
+### Lint
+
+```
+golangci-lint run --enable=gosec
+```
+
 ## Test
 
 ```
