@@ -198,7 +198,7 @@ func Test_state_innerBlock(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			for i := 0; i < 10; i++ {
+			for range 10 {
 				tt.s.innerBlock()
 			}
 			if !reflect.DeepEqual(tt.s, tt.want) {
