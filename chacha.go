@@ -78,7 +78,7 @@ func (s state) clone() state {
 }
 
 func (s state) add(other state) {
-	for i := 0; i < 16; i++ {
+	for i := range 16 {
 		s[i] += other[i]
 	}
 }
@@ -87,8 +87,8 @@ func (s state) serialize() []byte {
 	// state is 4*4 size
 	// state'element is uint32(4byte)
 	serialized := make([]byte, 4*4*4)
-	for i := 0; i < 4; i++ {
-		for j := 0; j < 4; j++ {
+	for i := range 4 {
+		for j := range 4 {
 			index := (i*4 + j)
 			offset := index * 4
 			binary.LittleEndian.PutUint32(serialized[offset:offset+4], s[index])
@@ -123,7 +123,7 @@ func quarterRound(a, b, c, d uint32) (uint32, uint32, uint32, uint32) {
 func block(key, nonce []byte, counter uint32) []byte {
 	s, _ := newState(key, nonce, counter)
 	init := s.clone()
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		s.innerBlock()
 	}
 	s.add(init)
