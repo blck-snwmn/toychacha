@@ -44,6 +44,22 @@ func TestSealMessageRoundTrip(t *testing.T) {
 	if !bytes.Equal(got, plaintext) {
 		t.Fatalf("standard AEAD opened plaintext = %q, want %q", got, plaintext)
 	}
+
+	// Repeating the demo with the same key and plaintext must not reuse its nonce.
+	secondMessage, err := sealMessage(aead, plaintext, aad)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Equal(message[:aead.NonceSize()], secondMessage[:aead.NonceSize()]) {
+		t.Fatal("sealMessage reused a nonce")
+	}
+	got, err = openMessage(aead, secondMessage, aad)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(got, plaintext) {
+		t.Fatalf("second opened plaintext = %q, want %q", got, plaintext)
+	}
 }
 
 func TestOpenMessageRejectsInvalidInput(t *testing.T) {
