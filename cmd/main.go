@@ -1,8 +1,10 @@
 package main
 
 import (
+	"crypto/rand"
 	"flag"
 	"fmt"
+	"log"
 	"reflect"
 	"time"
 
@@ -58,11 +60,11 @@ func main() {
 		0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9e, 0x9f,
 	}
 
-	nonce := []byte{
-		0x07, 0x00, 0x00, 0x00, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47,
-	}
-
 	tcp, _ := toychacha.New(key)
+	nonce := make([]byte, tcp.NonceSize())
+	if _, err := rand.Read(nonce); err != nil {
+		log.Fatal(err)
+	}
 	aead := make([]byte, len(plaintext)+tcp.Overhead())
 	aead = tcp.Seal(aead, nonce, []byte(plaintext), aad)
 	// fmt.Printf("AEAD=%X\n", aead)
