@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/cipher"
 	"crypto/rand"
 	"flag"
 	"fmt"
@@ -61,20 +60,17 @@ func main() {
 		0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9e, 0x9f,
 	}
 
-	tcp, err := toychacha.New(key)
-	if err != nil {
+	tcp, _ := toychacha.New(key)
+	nonce := make([]byte, tcp.NonceSize())
+	if _, err := rand.Read(nonce); err != nil {
 		log.Fatal(err)
 	}
-	message, err := sealMessage(tcp, plaintext, aad)
-	if err != nil {
-		log.Fatal(err)
-	}
-	// fmt.Printf("AEAD=%X\n", message)
+	aead := make([]byte, len(plaintext)+tcp.Overhead())
+	aead = tcp.Seal(aead, nonce, []byte(plaintext), aad)
+	// fmt.Printf("AEAD=%X\n", aead)
 
-	p, err := openMessage(tcp, message, aad)
-	if err != nil {
-		log.Fatal(err)
-	}
+	p := make([]byte, len(plaintext))
+	p, _ = tcp.Open(p, nonce, aead, aad)
 	fmt.Printf("seal -> open =%v\n", reflect.DeepEqual(plaintext, p))
 	// {
 	// 	f, err := os.Create("heap.prof")
@@ -86,21 +82,4 @@ func main() {
 	// 		log.Fatal(err)
 	// 	}
 	// }
-}
-
-// sealMessage returns nonce || ciphertext || tag so the nonce travels with the ciphertext.
-func sealMessage(aead cipher.AEAD, plaintext, aad []byte) ([]byte, error) {
-	nonce := make([]byte, aead.NonceSize())
-	if _, err := rand.Read(nonce); err != nil {
-		return nil, fmt.Errorf("generate nonce: %w", err)
-	}
-	return append(nonce, aead.Seal(nil, nonce, plaintext, aad)...), nil
-}
-
-func openMessage(aead cipher.AEAD, message, aad []byte) ([]byte, error) {
-	nonceSize := aead.NonceSize()
-	if len(message) < nonceSize+aead.Overhead() {
-		return nil, fmt.Errorf("message too short: got %d bytes", len(message))
-	}
-	return aead.Open(nil, message[:nonceSize], message[nonceSize:], aad)
 }
